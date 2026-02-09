@@ -1,0 +1,65 @@
+env_type: cosmos_wm
+task_suite_name: libero_spatial
+wm_env_type: libero
+
+total_num_envs: null
+
+auto_reset: False
+ignore_terminations: False
+max_steps_per_rollout_epoch: 240
+max_episode_steps: 240 # max episode steps for truncation
+
+use_rel_reward: True
+reward_coef: 1.0
+
+# RLinf LiberoEnv specific settings
+reset_gripper_open: True
+is_eval: False
+
+seed: 0
+group_size: 1
+use_fixed_reset_state_ids: True
+use_ordered_reset_state_ids: False
+specific_reset_id: null
+
+video_cfg:
+  save_video: True
+  info_on_video: True
+  video_base_dir: ${runner.logger.log_path}/video/train
+
+###  ------------------Cosmos params define here ------------------
+
+# Path to the self-contained Cosmos model directory.
+# This directory should contain:
+#   - libero-spatial-2b-*.pt  (DiT checkpoint)
+#   - resnet_rm.pth           (reward model)
+#   - dataset/                (initial-state .npy trajectories)
+#   - dataset_statistics.json (action normalization stats)
+#   - tokenizer/tokenizer.pth (Cosmos video tokenizer)
+cosmos_model_dir: null
+
+initial_image_path: ${env.train.cosmos_model_dir}/dataset/
+
+world_model_cfg:
+  # Dataset settings
+  stats_path: ${env.train.cosmos_model_dir}/dataset_statistics.json
+  dtype: bf16
+
+  # Reward model
+  reward_model:
+    type: ResnetRM
+    from_pretrained: ${env.train.cosmos_model_dir}/resnet_rm.pth
+
+  # Cosmos Predict 2.5 settings
+  cosmos:
+    ckpt_path: ${env.train.cosmos_model_dir}/libero-spatial-2b-19k.pt
+    tokenizer_path: ${env.train.cosmos_model_dir}/tokenizer/tokenizer.pth
+    guidance: 7
+    num_steps: 10
+    action_scaler: 20.0
+    chunk_size: 12  # Cosmos natively predicts 12 frames per step
+    batch_size: 16  # micro-batch size for batched DiT inference (all envs per worker)
+
+  chunk: 8                     # should be same as chunk in VLA
+  condition_frame_length: 4    # condition frame length of world model
+  image_size: [256, 320]       # Cosmos output resolution (256x320)

@@ -1,0 +1,45 @@
+# Cosmos Predict 2 runtime dependencies for action-conditioned inference.
+# Installed from the NVIDIA custom index for pre-built CUDA 12.6 wheels.
+# The cosmos-predict2 package itself is cloned from source and installed
+# with --no-deps to avoid the hydra-core/omegaconf pin conflict on PyPI.
+#
+# NOTE: This file is independent of OpenSora. All model assets
+# (reward model, tokenizer, dataset) are bundled in the HuggingFace
+# checkpoint directory (see models/Cosmos-Predict2.5-LIBERO-Spatial/).
+
+# Core Cosmos deps
+einops==0.8.1
+diffusers==0.33.1
+megatron-core==0.12.1
+transformer-engine==1.13
+natten==0.21.0
+# hydra-core and omegaconf are already installed by RLinf's uv sync
+imageio[pyav,ffmpeg]==2.37.0
+
+# Needed by imaginaire / cosmos internals
+attrs==25.1.0
+decord==0.6.0
+ftfy==6.3.1
+fvcore==0.1.5.post20221221
+iopath==0.1.10
+loguru==0.7.3
+mediapy==1.2.4
+nltk==3.9.1
+sentencepiece==0.2.0
+safetensors==0.5.3
+scikit-image==0.25.2
+termcolor==3.1.0
+webdataset==0.2.111
+protobuf==4.25.3
+pynvml==12.0.0
+triton==3.2.0
+
+# Already in the venv but pinned here for safety
+torch==2.6.0
+torchvision==0.21.0
+numpy==1.26.4
+pillow
+opencv-python
+tqdm
+pyyaml
+transformers>=4.40.0
